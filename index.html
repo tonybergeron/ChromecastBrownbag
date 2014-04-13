@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Chromecast Development Brownbag</title>
+
+	<meta name="description" content="Chromecast Development Brownbag">
+	<meta name="author" content="Tony Bergeron">
+
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<link rel="stylesheet" href="css/reveal.min.css">
+	<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+	<!-- For syntax highlighting -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+
+	<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+	<!--[if lt IE 9]>
+	<script src="lib/js/html5shiv.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+
+	<div class="reveal">
+
+		<!-- Any section element inside of this container is displayed as a slide -->
+		<div class="slides">
+			<section>
+				<h1>Chromecast Lightningbag</h1>
+				<h3></h3>
+				<p>
+					<small>Tony Bergeron</small>
+				</p>
+			</section>
+
+			<section>
+				<section>
+					<h2>Overview</h2>
+					<ul>
+						<li>Communication</li>
+						<li>Creating an App</li>
+					</ul>
+
+					<aside class="notes">Notes Example</aside>
+				</section>
+
+				<!--
+					<section>
+				<h2>What I wont be talking about</h2>
+				<ul>
+					<li>User Experience Guidelines</li>
+					<li>In depth media streaming</li>
+					<li>Hacking</li>
+				</ul>
+			</section>
+			-->
+		</section>
+
+		<!-- Communcating with the Chromecast -->
+		<!--
+		<section>
+			<section>
+				<h2>What is the Chromecast?</h2>
+				<p>Dongle that streams content over wifi from the cloud*</p>
+				<ul>
+					<li>Release Timeline</li>
+				<ul>
+					<li>Device released on July 24, 2013</li>
+					<li>SDK released on February 3rd, 2014</li>
+					<li>UK release on March 19th, 2014</li>
+				</ul>
+				
+				<li>Apps</li>
+				<ul>
+					<li>Youtube</li>
+					<li>Google Play Music/Movies/TV</li>
+					<li>Netflix</li>
+					<li>HBO GO</li>
+					<li>Hulu Plus</li>
+					<li>Pandora</li>
+					<li>Songza</li>
+					<li>Plex*</li>
+				</ul>
+				<li>
+					<a href="https://www.google.com/intl/en/chrome/devices/chromecast/apps.html" target="_blank">App List</a>
+				</li>
+			</ul>
+		</section>
+		-->
+	</section>
+
+	<!-- Communcating with the Chromecast -->
+	<section>
+		<section>
+			<h2>Communication</h2>
+			<ul>
+				<li>
+					Chromecast is the middle man between the Sender and the Receiver
+				</li>
+				<ul>
+					<li>Communicates locally with device over wifi</li>
+					<li>Fetches content from the cloud*</li>
+				</ul>
+				<li>Sender App</li>
+				<ul>
+					<li>Android, iOS or Chrome App</li>
+				</ul>
+				<li>Receiver App</li>
+				<ul>
+					<li>HTML5/JavaScript Webapp</li>
+				</ul>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Comparison to Other Products</h2>
+			<ul>
+				<li>Chromecast</li>
+				<ul>
+					<li>Device tells Chromecast what to display</li>
+					<li>Chromecast Streams/Fetches the content from the cloud*</li>
+				</ul>
+
+				<li>AirPlay</li>
+				<ul>
+					<li>Content is streamed through the device</li>
+					<li>Display is Extended/Mirrored of the device</li>
+				</ul>
+
+				<li>Miracast</li>
+				<ul>
+					<li>Mirrors the display of the device</li>
+				</ul>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Communication Diagram</h2>
+			<img width="600px" height="400px" src="https://developers.google.com/cast/images/Diagram.png">
+		</section>
+
+		<section>
+			<h2>How we get connected: DIAL</h2>
+			<b><u>DI</u></b>scovery <b><u>A</u></b>nd <b><u>L</u></b>aunch
+			<ul>
+				<li>Automatically hunts for available devices</li>
+				<li>Handles the pairing process between sender/receiver app</li>
+			</ul>
+			<a>
+			<a href="http://www.dial-multiscreen.org/home" target="_blank">
+				<img width="600px" height="300px" src="http://i.imgur.com/hVkE8dQ.png">
+			</a>
+			<ul>
+				<li>[2] Device clicks "Cast" from app</li>
+				<li>[1] DIAL Receiver launches appropriate receiver app</li>
+			</ul>
+		</section>
+
+		<!--
+					<section>
+		<h2>Send over Network</h2>
+		<p>Command</p>
+		<pre><code style="font-size: 18px;">
+curl -H “Content-Type: application/json” http://10.0.1.2:8008/apps/YouTube -X POST -d ‘v=oHg5SJYRHA0′
+						</code></pre>
+	</section>
+
+	<section>
+		<h2>Send from Chrome App</h2>
+		<p>Send String Request</p>
+		<pre><code data-trim style="font-size: 18px; margin-top: 20px;">
+function sendMessage(message) {
+  if (session!=null) {
+    session.sendMessage(namespace, message, 
+    onSuccess.bind(this, &quot;Message sent: &quot; + message), onError);
+  }
+  else {
+    chrome.cast.requestSession(function(e) {
+      session = e;
+      session.sendMessage(namespace, message,
+      onSuccess.bind(this, &quot;Message sent: &quot; + message), onError);
+    }, onError);
+  }
+}
+						</code></pre>
+
+	</section>
+
+	<section>
+		<h2>Send from Chrome App</h2>
+		<p>Load Media Request</p>
+		<pre><code data-trim style="font-size: 18px; margin-top: 20px;">
+function loadMedia() {
+
+  //Check if we are connected
+  if (!session) {
+    console.log('no session');
+    appendMessage('no session');
+    return;
+  }
+
+  var currentMediaURL = "http://commondatastorage.googleapis.com/gtv-videos-bucket/big_buck_bunny_1080p.mp4";
+
+  //Setup the Request
+  var mediaInfo = new chrome.cast.media.MediaInfo(currentMediaURL);
+  mediaInfo.contentType = 'video/mp4';
+  var request = new chrome.cast.media.LoadRequest(mediaInfo);
+  request.autoplay = true;
+  request.currentTime = 0;
+
+  //Tell the Media Reciever what we want to play
+  session.loadMedia(request,
+  onMediaDiscovered.bind(this, 'loadMedia'), onMediaError);
+}
+						</code></pre>
+	</section>
+	-->
+</section>
+<section>
+	<h2>Creating your first Castable App</h2>
+	<ul>
+		<li>Create a Sender App</li>
+		<ul>
+			<li>Chrome</li>
+			<li>Android</li>
+			<li>iOS</li>
+		</ul>
+		<li>Create a Receiver App</li>
+		<ul>
+			<li>HTML5/JavaScript</li>
+		</ul>
+		<li>
+			Publish your app:
+			<a href="https://cast.google.com/publish/" target="_blank">https://cast.google.com/publish/</a>
+		</li>
+	</ul>
+</section>
+
+<section>
+	<h2>Lifecycle</h2>
+	<table>
+		<tr>
+			<td style="font-size: 15pt; vertical-align:middle">
+				<ol>
+					<li>Cast</li>
+					<li>Send App Info</li>
+					<li>Get App Info</li>
+					<li>App Location</li>
+					<li>Initialize Receiver</li>
+					<li>Connection</li>
+				</ol>
+			</td>
+			<td>
+				<a href="http://i.imgur.com/HPFTpqd.jpg" target="_blank">
+					<img width="730px" height="400px" src="http://i.imgur.com/HPFTpqd.jpg"></a>
+			</td>
+		</tr>
+	</table>
+
+</section>
+
+<section>
+	<h2>Debugging</h2>
+	<ul>
+		<li>http://[chromecast-local-address]:9222</li>
+		<ul>
+			<li>Use Router or Chromecast manager to get the IP</li>
+			<li>
+				http://<input type="text" id="debugger-input" size="17" value="192.168.134.125" style="font-size: 20pt; padding-bottom:5px">:9222
+			</li>
+			<li>
+				<a href="http://192.168.134.125:9222" id="debugger-link" target="_blank">Go</a>
+			</li>
+
+			<script>
+				$(function() {
+					$("#debugger-input").on('keyup', function() {
+						$('#debugger-link').attr('href', 'http://' + $("#debugger-input").val() + ':9222');
+						//$('#debugger-preview').html($("#debugger-input").val());
+					});
+				});
+			</script>
+		</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Demo</h1>
+
+	<h3><a href="https://googledrive.com/host/0B89Hn-JZLODZYkFiNk90b0Y2U28/chromesender.html" target="_blank">Hello Cast</a></h3>	
+
+</section>
+
+<section>
+	<section>
+		<h1>Sender API: Chrome</h1>
+		<ul>
+			<li>
+				<a href="https://developers.google.com/cast/docs/reference/chrome/index-all" target="_blank">Chrome API</a>
+			</li>
+		
+			<li>
+				<a href="https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session" target="_blank">chrome.cast.Session</a>
+			</li>
+			<ul>
+				<li>
+					<a href="https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#sendMessage" target="_blank">sendMessage</a>
+				</li>
+			</ul>
+		</ul>
+	</section>
+
+	<section>
+		<h1>Receiver API</h1>
+		<ul>
+			<li>
+				<a href="https://developers.google.com/cast/docs/reference/receiver/index-all" target="_blank">Receiver API</a>
+			</li>
+
+			<li>
+				<a href="https://developers.google.com/cast/docs/reference/receiver/cast.receiver.CastReceiverManager" target="_blank">cast.receiver.CastReceiverManager</a>
+			</li>
+			<ul>
+				<li>
+					<a href="https://developers.google.com/cast/docs/reference/receiver/cast.receiver.CastReceiverManager#getSender" target="_blank">getSender</a>
+				</li>
+				<li>
+					<a href="https://developers.google.com/cast/docs/reference/receiver/cast.receiver.CastReceiverManager#getSenders" target="_blank">getSenders</a>
+				</li>
+				<li>
+					<a href="https://developers.google.com/cast/docs/reference/receiver/cast.receiver.CastReceiverManager#getCastMessageBus" target="_blank">getCastMessageBus</a>
+				</li>
+			</ul>
+			<li>
+				<a href="https://developers.google.com/cast/docs/reference/receiver/cast.receiver.CastMessageBus" target="_blank">cast.receiver.CastMessageBus</a>
+			</li>
+			<ul>
+				<li>
+					<a href="https://developers.google.com/cast/docs/reference/receiver/cast.receiver.CastMessageBus#send" target="_blank">send</a>
+				</li>
+				<li>
+					<a href="https://developers.google.com/cast/docs/reference/receiver/cast.receiver.CastMessageBus#broadcast" target="_blank">broadcast</a>
+				</li>
+			</ul>
+		</ul>
+
+	</section>
+</section>
+
+
+
+
+
+
+
+
+<section>
+	<h2>Followup</h2>
+
+	<ul>
+		<li>
+			<a href="https://developers.google.com/cast/" target="_blank">https://developers.google.com/cast/</a>
+		</li>
+		<li>
+			<a href="https://github.com/googlecast" target="_blank">https://github.com/googlecast</a>
+		</li>
+		<li>
+			<a href="http://www.dial-multiscreen.org/" target="_blank">http://www.dial-multiscreen.org/</a>
+		</li>
+	</ul>
+
+</section>
+
+<section>
+	<h1>end</h1>
+</section>
+
+</div>
+
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.min.js"></script>
+
+<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+</body>
+</html>
